@@ -214,14 +214,27 @@ export default function HomePage() {
     };
   }, [selectedProject, selectedCertificate, selectedGalleryImage]);
 
-  const services = [
+interface ServiceItem {
+  icon: string;
+  title: string;
+  desc: string;
+  featured?: boolean;
+}
+
+interface SkillItem {
+  icon: string;
+  name: string;
+  style?: React.CSSProperties;
+}
+
+  const services: ServiceItem[] = [
     { icon: 'bi-bar-chart', title: 'Data Analysis', desc: 'Analyzing complex datasets to find actionable insights using Python and SQL.' },
     { icon: 'bi-code-slash', title: 'Front-End Dev', desc: 'Building responsive and modern interfaces using HTML, CSS, JavaScript.' },
     { icon: 'bi-graph-up', title: 'Data Visualization', desc: 'Creating interactive dashboards and reports for business intelligence.' },
     { icon: 'bi-database', title: 'Database Mgmt', desc: 'Designing and optimizing databases with MySQL and Laravel.' },
   ];
 
-  const skills = [
+  const skills: SkillItem[] = [
     { icon: 'devicon-html5-plain colored', name: 'HTML' },
     { icon: 'devicon-css3-plain colored', name: 'CSS' },
     { icon: 'devicon-javascript-plain colored', name: 'JavaScript' },

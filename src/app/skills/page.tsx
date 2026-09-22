@@ -3,7 +3,13 @@
 import { useScrollReveal, useStaggerReveal } from '@/lib/gsap';
 import Footer from '../components/Footer';
 
-const skills = [
+interface SkillItem {
+  icon: string;
+  name: string;
+  style?: React.CSSProperties;
+}
+
+const skills: SkillItem[] = [
   { icon: 'devicon-html5-plain colored', name: 'HTML' },
   { icon: 'devicon-css3-plain colored', name: 'CSS' },
   { icon: 'devicon-javascript-plain colored', name: 'JavaScript' },

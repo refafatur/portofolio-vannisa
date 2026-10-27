@@ -152,9 +152,7 @@ export default function LoginPage() {
             {error && <div className="error-message">{error}</div>}
           </form>
 
-          <div className="form-footer">
-            Don&apos;t have an account? <Link href="/register">Sign Up</Link>
-          </div>
+
         </div>
 
         <div className="login-branding">

@@ -12,6 +12,16 @@ export default function EditProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState('');
   const [rolesInput, setRolesInput] = useState('');
 
+  // Change password state
+  const [pwSection, setPwSection] = useState(false);
+  const [currentPw, setCurrentPw] = useState('');
+  const [newPw, setNewPw] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [changingPw, setChangingPw] = useState(false);
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+
   useEffect(() => {
     async function fetchProfile() {
       try {
@@ -132,6 +142,49 @@ export default function EditProfilePage() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const Swal = (await import('sweetalert2')).default;
+
+    if (newPw !== confirmPw) {
+      Swal.fire('Gagal', 'Konfirmasi password tidak sesuai.', 'error');
+      return;
+    }
+    if (newPw.length < 6) {
+      Swal.fire('Gagal', 'Password baru minimal 6 karakter.', 'error');
+      return;
+    }
+
+    setChangingPw(true);
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal mengubah password');
+
+      setCurrentPw('');
+      setNewPw('');
+      setConfirmPw('');
+      setPwSection(false);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Password berhasil diperbarui!',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Terjadi kesalahan';
+      Swal.fire('Gagal', msg, 'error');
+    } finally {
+      setChangingPw(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 0' }}>
@@ -143,14 +196,15 @@ export default function EditProfilePage() {
 
   return (
     <div className="edit-profile-wrapper" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <div className="card">
+      {/* ── Edit Profil Card ── */}
+      <div className="card" style={{ marginBottom: '28px' }}>
         <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h3 className="card-title" style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="bi bi-person-gear" style={{ color: 'var(--db-primary)' }}></i> Edit Profil & CV
+              <i className="bi bi-person-gear" style={{ color: 'var(--db-primary)' }}></i> Edit Profil &amp; CV
             </h3>
             <p style={{ color: 'var(--db-text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>
-              Perbarui identitas, kontak, info bio, foto profil, dan upload dokumen CV PDF Anda.
+              Perbarui identitas, kontak, info bio, foto profil, dan upload dokumen CV PDF Anda. Data disimpan ke database.
             </p>
           </div>
           {profile.cvUrl && (
@@ -407,6 +461,139 @@ export default function EditProfilePage() {
             </div>
           </form>
         </div>
+      </div>
+
+      {/* ── Ganti Password Card ── */}
+      <div className="card">
+        <div
+          className="card-header"
+          style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          onClick={() => setPwSection(!pwSection)}
+        >
+          <h3 className="card-title" style={{ fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+            <i className="bi bi-shield-lock" style={{ color: 'var(--db-primary)' }}></i> Ganti Password
+          </h3>
+          <i className={`bi bi-chevron-${pwSection ? 'up' : 'down'}`} style={{ color: 'var(--db-text-muted)' }}></i>
+        </div>
+
+        {pwSection && (
+          <div className="card-body">
+            <p style={{ color: 'var(--db-text-muted)', fontSize: '0.85rem', marginBottom: '20px' }}>
+              Masukkan password lama Anda dan password baru untuk memperbarui keamanan akun.
+            </p>
+            <form onSubmit={handleChangePassword}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                {/* Password Lama */}
+                <div>
+                  <label className="form-label">Password Lama</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showCurrentPw ? 'text' : 'password'}
+                      required
+                      value={currentPw}
+                      onChange={(e) => setCurrentPw(e.target.value)}
+                      className="form-control"
+                      placeholder="Masukkan password lama"
+                      style={{ paddingRight: '44px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPw(!showCurrentPw)}
+                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--db-text-muted)', padding: 0 }}
+                      tabIndex={-1}
+                    >
+                      <i className={`bi bi-eye${showCurrentPw ? '-slash' : ''}`}></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Password Baru */}
+                <div>
+                  <label className="form-label">Password Baru</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showNewPw ? 'text' : 'password'}
+                      required
+                      value={newPw}
+                      onChange={(e) => setNewPw(e.target.value)}
+                      className="form-control"
+                      placeholder="Minimal 6 karakter"
+                      style={{ paddingRight: '44px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPw(!showNewPw)}
+                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--db-text-muted)', padding: 0 }}
+                      tabIndex={-1}
+                    >
+                      <i className={`bi bi-eye${showNewPw ? '-slash' : ''}`}></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Konfirmasi Password Baru */}
+                <div>
+                  <label className="form-label">Konfirmasi Password Baru</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showConfirmPw ? 'text' : 'password'}
+                      required
+                      value={confirmPw}
+                      onChange={(e) => setConfirmPw(e.target.value)}
+                      className="form-control"
+                      placeholder="Ulangi password baru"
+                      style={{ paddingRight: '44px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPw(!showConfirmPw)}
+                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--db-text-muted)', padding: 0 }}
+                      tabIndex={-1}
+                    >
+                      <i className={`bi bi-eye${showConfirmPw ? '-slash' : ''}`}></i>
+                    </button>
+                  </div>
+                  {confirmPw && newPw !== confirmPw && (
+                    <small style={{ color: '#ef4444', display: 'block', marginTop: '4px' }}>
+                      <i className="bi bi-exclamation-circle me-1"></i>Password tidak cocok
+                    </small>
+                  )}
+                  {confirmPw && newPw === confirmPw && confirmPw.length >= 6 && (
+                    <small style={{ color: '#22c55e', display: 'block', marginTop: '4px' }}>
+                      <i className="bi bi-check-circle me-1"></i>Password cocok
+                    </small>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '16px', borderTop: '1px solid var(--db-border)' }}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => { setPwSection(false); setCurrentPw(''); setNewPw(''); setConfirmPw(''); }}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={changingPw}
+                  className="btn btn-primary"
+                  style={{ minWidth: '160px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  {changingPw ? (
+                    <>
+                      <i className="bi bi-arrow-repeat spin"></i> Menyimpan...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-shield-check"></i> Ubah Password
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

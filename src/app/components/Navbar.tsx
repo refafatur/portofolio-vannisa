@@ -88,7 +88,7 @@ export default function Navbar() {
     }
   }, [mobileOpen]);
 
-  if (pathname?.startsWith('/login') || pathname?.startsWith('/register') || pathname?.startsWith('/dashboard')) {
+  if (pathname?.startsWith('/login') || pathname?.startsWith('/dashboard')) {
     return null;
   }
 

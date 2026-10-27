@@ -1875,8 +1875,7 @@ body::before {
   right: -120px;
 }
 
-.login-container,
-.register-container {
+.login-container {
   position: relative;
   z-index: 1;
   display: flex;
@@ -1889,8 +1888,7 @@ body::before {
   width: 92%;
 }
 
-.login-form-container,
-.register-form-container {
+.login-form-container {
   flex: 1;
   padding: 56px;
   display: flex;
@@ -1898,8 +1896,7 @@ body::before {
   justify-content: center;
 }
 
-.login-branding,
-.register-branding {
+.login-branding {
   flex: 1;
   background: var(--onyx);
   padding: 60px 48px;
@@ -3155,13 +3152,10 @@ body::before {
   .footer-nav { flex-wrap: wrap; justify-content: center; }
   .hero-image-container { width: 280px; height: 360px; }
   .float-card { display: none; }
-  .login-container,
-  .register-container { flex-direction: column-reverse; max-width: 440px; }
-  .login-branding,
-  .register-branding { padding: 40px 28px; }
+  .login-container { flex-direction: column-reverse; max-width: 440px; }
+  .login-branding { padding: 40px 28px; }
   .branding-features { display: none; }
-  .login-form-container,
-  .register-form-container { padding: 36px 24px; }
+  .login-form-container { padding: 36px 24px; }
   .cert-detail-container { flex-direction: column; }
   .cert-detail-info { padding: 32px 24px; }
   .cert-detail-title { font-size: 1.6rem; }

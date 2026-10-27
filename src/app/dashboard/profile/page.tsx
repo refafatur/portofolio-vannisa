@@ -442,18 +442,6 @@ export default function EditProfilePage() {
                   placeholder="https://instagram.com/..."
                 />
               </div>
-              <div>
-                <label className="form-label">TikTok</label>
-                <input
-                  type="url"
-                  value={profile.socials?.tiktok || ''}
-                  onChange={(e) =>
-                    setProfile({ ...profile, socials: { ...profile.socials, tiktok: e.target.value } })
-                  }
-                  className="form-control"
-                  placeholder="https://tiktok.com/@..."
-                />
-              </div>
             </div>
 
             {/* Submit Button */}

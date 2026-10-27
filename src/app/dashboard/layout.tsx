@@ -15,11 +15,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAuthenticated = !!adminName;
 
+  // Auto close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     if (!adminName) {
       router.replace('/login');
     }
   }, [adminName, router]);
+
+  // Prevent background scroll when mobile sidebar is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminName');
@@ -38,10 +55,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <>
+      {/* Mobile Sidebar Backdrop Overlay */}
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} id="sidebar">
         <div className="sidebar-logo">
           <span className="logo-text">Dashboard</span>
+          <button
+            className="sidebar-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            <i className="bi bi-x-lg"></i>
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -82,11 +113,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Header */}
         <header className="dashboard-header">
           <div className="header-left">
-            <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-              <i className="bi bi-list"></i>
+            <button
+              className="menu-toggle"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle navigation menu"
+            >
+              <i className={`bi ${sidebarOpen ? 'bi-x-lg' : 'bi-list'}`}></i>
             </button>
             <h1 className="page-title">
               {pathname === '/dashboard' ? 'Dashboard' :
+               pathname === '/dashboard/profile' ? 'Edit Profile' :
                pathname === '/dashboard/projects' ? 'Projects' :
                pathname === '/dashboard/certificates' ? 'Certificates' :
                pathname === '/dashboard/gallery' ? 'Gallery' : 'Dashboard'}
@@ -104,13 +140,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="badge"></span>
               </button>
             </div>
-            <div className="user-profile">
+            <Link
+              href="/dashboard/profile"
+              className="user-profile"
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
+              title="Klik untuk Edit Profile & Upload CV"
+            >
               <div className="user-avatar">{adminName.charAt(0).toUpperCase()}</div>
               <div className="user-info">
-                <span className="user-name">{adminName}</span>
-                <span className="user-role">Administrator</span>
+                <span className="user-name" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {adminName} <i className="bi bi-pencil" style={{ fontSize: '0.75rem', opacity: 0.7 }}></i>
+                </span>
+                <span className="user-role">Edit Profile</span>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 

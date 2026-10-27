@@ -2,6 +2,7 @@
 
 import { useScrollReveal, useStaggerReveal } from '@/lib/gsap';
 import Footer from '../components/Footer';
+import { calculateAge } from '@/lib/profileData';
 
 const timeline = [
   { year: '2016 - 2019', title: 'SMP', desc: 'Menempuh pendidikan menengah pertama.' },
@@ -54,10 +55,10 @@ export default function AboutPage() {
             <div className="about-info-block">
               <h3>Details</h3>
               <dl className="about-details">
-                <div><dt>Age</dt><dd>21</dd></div>
+                <div><dt>Age</dt><dd>{calculateAge('2004-05-18')}</dd></div>
                 <div><dt>Location</dt><dd>Bogor, ID</dd></div>
                 <div><dt>Email</dt><dd>vannisamaulvi@gmail.com</dd></div>
-                <div><dt>Phone</dt><dd>+62 813 1749 0001</dd></div>
+                <div><dt>Phone</dt><dd>+62 896-7742-1706</dd></div>
                 <div><dt>Freelance</dt><dd className="available">Available</dd></div>
               </dl>
             </div>

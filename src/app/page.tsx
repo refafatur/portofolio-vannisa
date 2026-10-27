@@ -12,6 +12,7 @@ import {
   refreshScrollTrigger,
 } from '@/lib/gsap';
 import Footer from './components/Footer';
+import { ProfileData, defaultProfile, calculateAge } from '@/lib/profileData';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -39,6 +40,7 @@ interface GalleryImage {
 }
 
 export default function HomePage() {
+  const [profile, setProfile] = useState<ProfileData>(defaultProfile);
   const [projects, setProjects] = useState<Project[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
@@ -73,7 +75,6 @@ export default function HomePage() {
 
   const projectCounterRef = useCounter(projectCount, 2, 0.5);
   const certCounterRef = useCounter(certCount, 2, 0.7);
-  const expCounterRef = useCounter(2, 2, 0.9);
 
   // Scroll progress
   useEffect(() => {
@@ -118,14 +119,14 @@ export default function HomePage() {
   // Typing animation
   useEffect(() => {
     if (!typingRef.current) return;
-    const roles = ['Data Analyst', 'Front-End Developer', 'Data Analyst', 'Front-End Developer'];
+    const roles = profile.roles && profile.roles.length > 0 ? profile.roles : ['Data Analyst', 'Front-End Developer'];
     let roleIdx = 0;
     let charIdx = 0;
     let deleting = false;
     let timeout: ReturnType<typeof setTimeout>;
 
     function typeRole() {
-      const role = roles[roleIdx];
+      const role = roles[roleIdx % roles.length];
       if (typingRef.current) {
         typingRef.current.textContent = deleting
           ? role.substring(0, --charIdx)
@@ -144,10 +145,27 @@ export default function HomePage() {
     }
     typeRole();
     return () => clearTimeout(timeout);
-  }, []);
+  }, [profile.roles]);
 
   // Load data
   useEffect(() => {
+    async function loadProfile() {
+      try {
+        // Record profile visit
+        fetch('/api/views', { method: 'POST' }).catch(() => {});
+
+        const res = await fetch('/api/profile');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.nama) {
+            setProfile(data);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading profile:', e);
+      }
+    }
+
     async function loadProjects() {
       try {
         const res = await fetch('/api/projects');
@@ -184,6 +202,7 @@ export default function HomePage() {
       }
     }
 
+    loadProfile();
     loadProjects();
     loadCertificates();
     loadGallery();
@@ -261,8 +280,8 @@ interface SkillItem {
             </div>
 
             <h1 className="hero-title" ref={heroTitleRef}>
-              Hi, I&apos;m <span className="gradient-text">Vannisa</span><br />
-              Maulvi
+              Hi, I&apos;m <span className="gradient-text">{profile.nama.split(' ')[0]}</span><br />
+              {profile.nama.split(' ').slice(1).join(' ')}
             </h1>
 
             <p className="hero-role">
@@ -271,16 +290,52 @@ interface SkillItem {
             </p>
 
             <p className="hero-desc">
-              A passionate professional bridging the gap between data insights and beautiful user interfaces.
+              {profile.bio}
             </p>
 
-            <div className="hero-actions">
+            <div className="hero-actions" style={{ flexWrap: 'wrap', gap: '14px' }}>
               <a href="#contact" className="btn btn-primary btn-lg">
                 <i className="bi bi-arrow-right"></i> Let&apos;s Work Together
               </a>
               <a href="#project" className="btn btn-outline btn-lg">
                 View Projects
               </a>
+              {profile.cvUrl ? (
+                <a
+                  href={profile.cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-lg"
+                  style={{
+                    background: 'rgba(219, 39, 119, 0.15)',
+                    border: '1px solid rgba(219, 39, 119, 0.4)',
+                    color: 'var(--text-primary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 20px rgba(219, 39, 119, 0.15)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <i className="bi bi-file-earmark-pdf-fill" style={{ color: '#ec4899', fontSize: '1.15rem' }}></i> Lihat CV
+                </a>
+              ) : (
+                <a
+                  href="#about"
+                  className="btn btn-lg"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    color: 'var(--text-muted)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  title="CV belum diunggah"
+                >
+                  <i className="bi bi-file-earmark-pdf" style={{ fontSize: '1.15rem' }}></i> Lihat CV
+                </a>
+              )}
             </div>
 
             <div className="hero-stats">
@@ -296,12 +351,6 @@ interface SkillItem {
                 </span>
                 <span className="hero-stat-label">Certifications</span>
               </div>
-              <div className="hero-stat">
-                <span className="hero-stat-value" ref={expCounterRef}>
-                  0
-                </span>
-                <span className="hero-stat-label">Years Exp.</span>
-              </div>
             </div>
           </div>
 
@@ -309,7 +358,7 @@ interface SkillItem {
             <div className="hero-image-container" ref={heroImageParallaxRef}>
               <div className="hero-glow"></div>
               <div className="hero-image-wrapper">
-                <img src="/image/me.png" alt="Vannisa Maulvi" />
+                <img src={profile.avatarUrl || '/image/me.png'} alt={profile.nama} />
               </div>
               <div className="float-card float-card-1">
                 <div className="fc-icon"><i className="bi bi-bar-chart"></i></div>
@@ -341,12 +390,12 @@ interface SkillItem {
                 Turning data into insights, and ideas into interfaces.
               </h2>
               <p className="about-hero-desc" style={{ fontSize: '1.2rem', margin: '0 auto 40px' }}>
-                Hello, I am Vannisa Maulvi. I specialize in Data Analysis and Front-End Development, bringing analytical rigor to creative web solutions.
+                {profile.aboutDesc}
               </p>
               <div className="about-socials" style={{ justifyContent: 'center' }}>
-                <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a>
-                <a href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href={profile.socials?.linkedin || '#'} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href={profile.socials?.github || '#'} target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href={profile.socials?.instagram || '#'} target="_blank" rel="noopener noreferrer">Instagram</a>
                 <Link href="/about">More about me</Link>
               </div>
             </div>
@@ -356,11 +405,11 @@ interface SkillItem {
             <div className="about-info-block">
               <h3>Details</h3>
               <dl className="about-details">
-                <div><dt>Age</dt><dd>21</dd></div>
-                <div><dt>Location</dt><dd>Bogor, ID</dd></div>
-                <div><dt>Email</dt><dd>vannisamaulvi@gmail.com</dd></div>
-                <div><dt>Phone</dt><dd>+62 813 1749 0001</dd></div>
-                <div><dt>Freelance</dt><dd className="available">Available</dd></div>
+                <div><dt>Age</dt><dd>{calculateAge('2004-05-18')}</dd></div>
+                <div><dt>Location</dt><dd>{profile.location}</dd></div>
+                <div><dt>Email</dt><dd>{profile.email}</dd></div>
+                <div><dt>Phone</dt><dd>{profile.phone}</dd></div>
+                <div><dt>Freelance</dt><dd className="available">{profile.freelance}</dd></div>
               </dl>
             </div>
 
@@ -535,7 +584,12 @@ interface SkillItem {
               <p className="section-desc">Have a question or a project in mind? Let&apos;s connect!</p>
             </div>
             <div style={{ marginBottom: 48 }}>
-              <a href="https://wa.me/6281317490001" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
+              <a
+                href={`https://wa.me/${(profile.phone || '').replace(/[^0-9]/g, '') || '6289677421706'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary btn-lg"
+              >
                 <i className="bi bi-whatsapp"></i> Send Message
               </a>
             </div>
@@ -543,17 +597,17 @@ interface SkillItem {
               <div className="contact-card">
                 <div className="contact-icon"><i className="bi bi-envelope"></i></div>
                 <h4>Email</h4>
-                <p>vannisamaulvi@gmail.com</p>
+                <p>{profile.email}</p>
               </div>
               <div className="contact-card">
                 <div className="contact-icon"><i className="bi bi-telephone"></i></div>
                 <h4>Phone</h4>
-                <p>+62 813 1749 0001</p>
+                <p>{profile.phone}</p>
               </div>
               <div className="contact-card">
                 <div className="contact-icon"><i className="bi bi-geo-alt"></i></div>
                 <h4>Location</h4>
-                <p>Bogor, Jawa Barat</p>
+                <p>{profile.location}</p>
               </div>
             </div>
           </div>

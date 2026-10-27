@@ -13,7 +13,7 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://refafatur-portofolio.vercel.app/"),
+  metadataBase: new URL("https://vannisamaulvi-portofolio.vercel.app/"),
   title: "Vannisa Maulvi - Portfolio",
   description:
     "Vannisa Maulvi - Data Analyst & Front-End Developer. Specializing in web development, data analysis, and modern UI/UX design.",
@@ -28,12 +28,12 @@ export const metadata: Metadata = {
     google: "wdm9pYDstzsO5PjU73Rqq6ayfjQSb8T4djpu5_tqOvs",
   },
   alternates: {
-    canonical: "https://refafatur-portofolio.vercel.app/",
+    canonical: "https://vannisamaulvi-portofolio.vercel.app/",
   },
   openGraph: {
     title: "Vannisa Maulvi - Portfolio",
     description: "Data Analyst & Front-End Developer specializing in data-driven web applications.",
-    url: "https://refafatur-portofolio.vercel.app/",
+    url: "https://vannisamaulvi-portofolio.vercel.app/",
     type: "website",
     images: [
       {
@@ -61,10 +61,10 @@ export default function RootLayout({
       "@type": "WebSite",
       "name": "Vannisa Maulvi Portfolio",
       "alternateName": "Vannisa Maulvi",
-      "url": "https://refafatur-portofolio.vercel.app/",
+      "url": "https://vannisamaulvi-portofolio.vercel.app/",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://refafatur-portofolio.vercel.app/?s={search_term_string}",
+        "target": "https://vannisamaulvi-portofolio.vercel.app/?s={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     },
@@ -73,7 +73,7 @@ export default function RootLayout({
       "@type": "Person",
       "name": "Vannisa Maulvi",
       "jobTitle": "Data Analyst & Front-End Developer",
-      "url": "https://refafatur-portofolio.vercel.app/",
+      "url": "https://vannisamaulvi-portofolio.vercel.app/",
       "sameAs": [
         "https://www.instagram.com/vannisamaulvi/",
         "https://github.com/vannisamaulvi",
@@ -84,37 +84,37 @@ export default function RootLayout({
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
       "name": "Home",
-      "url": "https://refafatur-portofolio.vercel.app/"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/"
     },
     {
       "@context": "https://schema.org",
-      "@type": "SiteNavigationElement",
+      "@type": "About",
       "name": "About",
-      "url": "https://refafatur-portofolio.vercel.app/about"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/about"
     },
     {
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
       "name": "Project",
-      "url": "https://refafatur-portofolio.vercel.app/project"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/project"
     },
     {
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
       "name": "Contact",
-      "url": "https://refafatur-portofolio.vercel.app/contact"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/contact"
     },
     {
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
       "name": "Certificates",
-      "url": "https://refafatur-portofolio.vercel.app/certificates"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/certificates"
     },
     {
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
       "name": "Gallery",
-      "url": "https://refafatur-portofolio.vercel.app/gallery"
+      "url": "https://vannisamaulvi-portofolio.vercel.app/gallery"
     }
   ];
 

@@ -109,6 +109,22 @@ export default function DashboardPage() {
           }
         });
 
+        // Load real views
+        try {
+          const viewsRes = await fetch('/api/views');
+          const viewsData = await viewsRes.json();
+          const viewsEl = document.getElementById('viewsCount');
+          if (viewsEl && typeof viewsData.totalViews === 'number') {
+            animateCounter(viewsEl, viewsData.totalViews);
+          }
+          const monthlyEl = document.getElementById('viewsMonthly');
+          if (monthlyEl && typeof viewsData.monthlyViews === 'number') {
+            monthlyEl.textContent = `+${viewsData.monthlyViews} this month`;
+          }
+        } catch (e) {
+          console.error('Error fetching views:', e);
+        }
+
         if (chartRef.current) {
           const Chart = (await import('chart.js/auto')).default;
           if (chartInstanceRef.current) {
@@ -223,8 +239,8 @@ export default function DashboardPage() {
         <div className="stat-card">
           <div className="stat-info">
             <h3>Profile Views</h3>
-            <div className="stat-value">1.2K</div>
-            <div className="stat-change"><i className="bi bi-arrow-up"></i> +12% this month</div>
+            <div className="stat-value" id="viewsCount">0</div>
+            <div className="stat-change"><i className="bi bi-arrow-up"></i> <span id="viewsMonthly">+0 this month</span></div>
           </div>
           <div className="stat-icon"><i className="bi bi-eye"></i></div>
         </div>
@@ -305,12 +321,14 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="card">
-            <div className="card-header"><h3 className="card-title">Admin Profile</h3></div>
+            <div className="card-header">
+              <h3 className="card-title">Admin Profile</h3>
+            </div>
             <div className="card-body">
               <div className="profile-card">
                 <div className="profile-avatar">{adminName.charAt(0).toUpperCase()}</div>
                 <h3 className="profile-name">{adminName}</h3>
-                <p className="profile-email">admin@portfolio.com</p>
+                <p className="profile-email">vannisamaulvi@gmail.com</p>
                 <div className="profile-stats">
                   <div className="profile-stat">
                     <div className="profile-stat-value" id="profileProjects">0</div>

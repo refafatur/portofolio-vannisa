@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 
 const contactInfo = [
   { icon: 'bi-envelope', title: 'Email', value: 'vannisamaulvi@gmail.com', href: 'mailto:vannisamaulvi@gmail.com' },
-  { icon: 'bi-telephone', title: 'Phone', value: '+62 813 1749 0001', href: 'https://wa.me/6281317490001' },
+  { icon: 'bi-telephone', title: 'Phone', value: '+62 896-7742-1706', href: 'https://wa.me/6289677421706' },
   { icon: 'bi-geo-alt', title: 'Location', value: 'Bogor, Jawa Barat', href: '#' },
 ];
 
@@ -13,7 +13,7 @@ const socialLinks = [
   { icon: 'bi-instagram', label: 'Instagram', href: 'https://www.instagram.com/vannisamaulvi/' },
   { icon: 'bi-github', label: 'GitHub', href: 'https://github.com/vannisamaulvi' },
   { icon: 'bi-linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/vannisa-maulvi/' },
-  { icon: 'bi-tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@_sixtpy' },
+  { icon: 'bi-tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@vannisamaulvi' },
 ];
 
 export default function ContactPage() {
@@ -33,7 +33,7 @@ export default function ContactPage() {
             </div>
 
             <div style={{ marginBottom: 56 }}>
-              <a href="https://wa.me/6281317490001" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
+              <a href="https://wa.me/6289677421706" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
                 <i className="bi bi-whatsapp"></i> Send Message
               </a>
             </div>

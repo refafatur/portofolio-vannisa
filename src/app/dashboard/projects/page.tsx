@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { convertToWebP } from '@/lib/imageUtils';
+import { ItemCardsSkeleton } from '../components/DashboardSkeletons';
 
 interface Project {
   id: number;
@@ -14,6 +15,8 @@ interface Project {
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [nama, setNama] = useState('');
@@ -28,11 +31,20 @@ export default function ProjectsPage() {
   const [isConverting, setIsConverting] = useState(false);
 
   const loadProjects = async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch('/api/projects');
+      if (!res.ok) throw new Error(`Failed to load projects (${res.status})`);
       const data = await res.json();
       if (Array.isArray(data)) setProjects(data);
-    } catch (error) { console.error('Error:', error); }
+      else throw new Error('Projects API returned an invalid response');
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load projects');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -162,8 +174,15 @@ export default function ProjectsPage() {
             <i className="bi bi-plus"></i> Add Project
           </button>
         </div>
-        <div className="card-body">
-          {projects.length === 0 ? (
+        <div className="card-body" aria-busy={loading}>
+          {loading ? (
+            <ItemCardsSkeleton />
+          ) : loadError ? (
+            <div className="dashboard-load-error" role="alert">
+              <p>{loadError}</p>
+              <button className="btn btn-primary" onClick={() => void loadProjects()}>Try Again</button>
+            </div>
+          ) : projects.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"><i className="bi bi-folder"></i></div>
               <h3 className="empty-title">No Projects Yet</h3>

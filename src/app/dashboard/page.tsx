@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { DashboardActivitySkeleton } from './components/DashboardSkeletons';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -28,7 +29,9 @@ export default function DashboardPage() {
     return localStorage.getItem('adminName') || 'Admin';
   });
   const [, setStats] = useState<Stats>({ projects: 0, certificates: 0, gallery: 0 });
+  const [statsLoading, setStatsLoading] = useState(true);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<unknown>(null);
   const welcomeRef = useRef<HTMLDivElement>(null);
@@ -170,6 +173,8 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error('Error loading stats:', error);
+      } finally {
+        setStatsLoading(false);
       }
     }
 
@@ -192,6 +197,8 @@ export default function DashboardPage() {
         setActivities(acts);
       } catch (error) {
         console.error('Error loading activity:', error);
+      } finally {
+        setActivitiesLoading(false);
       }
     }
 
@@ -211,7 +218,7 @@ export default function DashboardPage() {
       </div> */}
 
       {/* Stats Grid */}
-      <div className="stats-grid" ref={statsRef}>
+      <div className={`stats-grid${statsLoading ? ' dashboard-stats-loading' : ''}`} ref={statsRef} aria-busy={statsLoading}>
         <div className="stat-card">
           <div className="stat-info">
             <h3>Total Gallery</h3>
@@ -255,7 +262,8 @@ export default function DashboardPage() {
               <span className="badge-tag badge-primary">Live Data</span>
             </div>
             <div className="card-body">
-              <div className="chart-container">
+              <div className={`chart-container${statsLoading ? ' dashboard-chart-loading' : ''}`}>
+                {statsLoading && <div className="dashboard-skeleton dashboard-chart-skeleton" aria-hidden="true" />}
                 <canvas ref={chartRef}></canvas>
               </div>
             </div>
@@ -265,32 +273,23 @@ export default function DashboardPage() {
               <h3 className="card-title">Recent Activity</h3>
             </div>
             <div className="card-body">
-              <div className="activity-list">
-                {activities.length > 0 ? activities.map((a, i) => (
-                  <div className="activity-item" key={i}>
-                    <div className="activity-icon"><i className={`bi bi-${a.icon}`}></i></div>
-                    <div className="activity-content">
-                      <p className="activity-text">{a.text}</p>
-                      <span className="activity-time">{a.time}</span>
+              {activitiesLoading ? (
+                <DashboardActivitySkeleton />
+              ) : (
+                <div className="activity-list">
+                  {activities.length > 0 ? activities.map((a, i) => (
+                    <div className="activity-item" key={i}>
+                      <div className="activity-icon"><i className={`bi bi-${a.icon}`}></i></div>
+                      <div className="activity-content">
+                        <p className="activity-text">{a.text}</p>
+                        <span className="activity-time">{a.time}</span>
+                      </div>
                     </div>
-                  </div>
-                )) : (
-                  <>
-                    <div className="activity-item">
-                      <div className="activity-icon"><i className="bi bi-folder-plus"></i></div>
-                      <div className="activity-content"><p className="activity-text">New project added to portfolio</p><span className="activity-time">Just now</span></div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon"><i className="bi bi-award"></i></div>
-                      <div className="activity-content"><p className="activity-text">Certificate uploaded successfully</p><span className="activity-time">2 hours ago</span></div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon"><i className="bi bi-image"></i></div>
-                      <div className="activity-content"><p className="activity-text">Gallery images updated</p><span className="activity-time">Yesterday</span></div>
-                    </div>
-                  </>
-                )}
-              </div>
+                  )) : (
+                    <p className="activity-text">Belum ada aktivitas.</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -325,7 +324,7 @@ export default function DashboardPage() {
               <h3 className="card-title">Admin Profile</h3>
             </div>
             <div className="card-body">
-              <div className="profile-card">
+              <div className={`profile-card${statsLoading ? ' dashboard-stats-loading' : ''}`}>
                 <div className="profile-avatar">{adminName.charAt(0).toUpperCase()}</div>
                 <h3 className="profile-name">{adminName}</h3>
                 <p className="profile-email">vannisamaulvi@gmail.com</p>

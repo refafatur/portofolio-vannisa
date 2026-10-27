@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { convertToWebP } from '@/lib/imageUtils';
+import { ItemCardsSkeleton } from '../components/DashboardSkeletons';
 
 interface GalleryItem {
   id: number;
@@ -10,6 +11,8 @@ interface GalleryItem {
 
 export default function GalleryPage() {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingImage, setEditingImage] = useState<GalleryItem | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -17,11 +20,20 @@ export default function GalleryPage() {
   const [saving, setSaving] = useState(false);
 
   const loadGallery = async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch('/api/gallery');
+      if (!res.ok) throw new Error(`Failed to load gallery (${res.status})`);
       const data = await res.json();
       if (Array.isArray(data)) setGallery(data);
-    } catch (error) { console.error('Error:', error); }
+      else throw new Error('Gallery API returned an invalid response');
+    } catch (error) {
+      console.error('Error loading gallery:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load gallery');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -119,8 +131,15 @@ export default function GalleryPage() {
             <i className="bi bi-plus"></i> Add Image
           </button>
         </div>
-        <div className="card-body">
-          {gallery.length === 0 ? (
+        <div className="card-body" aria-busy={loading}>
+          {loading ? (
+            <ItemCardsSkeleton />
+          ) : loadError ? (
+            <div className="dashboard-load-error" role="alert">
+              <p>{loadError}</p>
+              <button className="btn btn-primary" onClick={() => void loadGallery()}>Try Again</button>
+            </div>
+          ) : gallery.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"><i className="bi bi-images"></i></div>
               <h3 className="empty-title">No Images Yet</h3>

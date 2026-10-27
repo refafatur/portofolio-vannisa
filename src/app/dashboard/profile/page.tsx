@@ -185,15 +185,6 @@ export default function EditProfilePage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: '60px 0' }}>
-        <i className="bi bi-arrow-repeat spin" style={{ fontSize: '2rem', color: 'var(--db-primary)' }}></i>
-        <p style={{ marginTop: '12px', color: 'var(--db-text-muted)' }}>Memuat data profil...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="edit-profile-wrapper" style={{ maxWidth: '1000px', margin: '0 auto' }}>
       {/* ── Edit Profil Card ── */}
@@ -207,7 +198,9 @@ export default function EditProfilePage() {
               Perbarui identitas, kontak, info bio, foto profil, dan upload dokumen CV PDF Anda. Data disimpan ke database.
             </p>
           </div>
-          {profile.cvUrl && (
+          {loading ? (
+            <span className="profile-skeleton profile-cv-skeleton" aria-hidden="true" />
+          ) : profile.cvUrl ? (
             <a
               href={profile.cvUrl}
               target="_blank"
@@ -217,10 +210,33 @@ export default function EditProfilePage() {
             >
               <i className="bi bi-file-earmark-pdf"></i> Lihat CV Saat Ini
             </a>
-          )}
+          ) : null}
         </div>
 
-        <div className="card-body">
+        <div className="card-body" aria-busy={loading}>
+          {loading ? (
+            <div className="profile-loading" role="status" aria-label="Memuat data profil">
+              <div className="profile-loading-media">
+                <div className="profile-loading-avatar profile-skeleton" />
+                <div className="profile-loading-upload profile-skeleton" />
+              </div>
+              <div className="profile-loading-fields">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <div className="profile-loading-field" key={index}>
+                    <span className="profile-skeleton profile-loading-label" />
+                    <span className="profile-skeleton profile-loading-input" />
+                  </div>
+                ))}
+              </div>
+              <span className="profile-skeleton profile-loading-textarea" />
+              <span className="profile-skeleton profile-loading-textarea profile-loading-textarea-short" />
+              <div className="profile-loading-fields profile-loading-socials">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <span className="profile-skeleton profile-loading-input" key={index} />
+                ))}
+              </div>
+            </div>
+          ) : (
           <form onSubmit={handleSave}>
             {/* Foto & CV Section */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px', paddingBottom: '24px', borderBottom: '1px solid var(--db-border)' }}>
@@ -460,6 +476,7 @@ export default function EditProfilePage() {
               </button>
             </div>
           </form>
+          )}
         </div>
       </div>
 

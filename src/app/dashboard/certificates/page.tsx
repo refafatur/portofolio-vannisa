@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { convertToWebP } from '@/lib/imageUtils';
+import { ItemCardsSkeleton } from '../components/DashboardSkeletons';
 
 interface Certificate {
   id: number;
@@ -12,6 +13,8 @@ interface Certificate {
 
 export default function CertificatesPage() {
   const [certs, setCerts] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingCert, setEditingCert] = useState<Certificate | null>(null);
   const [nama, setNama] = useState('');
@@ -22,11 +25,20 @@ export default function CertificatesPage() {
   const [saving, setSaving] = useState(false);
 
   const loadCerts = async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const res = await fetch('/api/certificates');
+      if (!res.ok) throw new Error(`Failed to load certificates (${res.status})`);
       const data = await res.json();
       if (Array.isArray(data)) setCerts(data);
-    } catch (error) { console.error('Error:', error); }
+      else throw new Error('Certificates API returned an invalid response');
+    } catch (error) {
+      console.error('Error loading certificates:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load certificates');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -143,8 +155,15 @@ export default function CertificatesPage() {
             <i className="bi bi-plus"></i> Add Certificate
           </button>
         </div>
-        <div className="card-body">
-          {certs.length === 0 ? (
+        <div className="card-body" aria-busy={loading}>
+          {loading ? (
+            <ItemCardsSkeleton />
+          ) : loadError ? (
+            <div className="dashboard-load-error" role="alert">
+              <p>{loadError}</p>
+              <button className="btn btn-primary" onClick={() => void loadCerts()}>Try Again</button>
+            </div>
+          ) : certs.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"><i className="bi bi-award"></i></div>
               <h3 className="empty-title">No Certificates Yet</h3>

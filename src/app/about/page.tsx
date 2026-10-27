@@ -1,15 +1,16 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useScrollReveal, useStaggerReveal } from '@/lib/gsap';
 import Footer from '../components/Footer';
 import { calculateAge } from '@/lib/profileData';
 
-const timeline = [
-  { year: '2016 - 2019', title: 'SMP', desc: 'Menempuh pendidikan menengah pertama.' },
-  { year: '2019 - 2022', title: 'SMA', desc: 'Menempuh pendidikan menengah atas.' },
-  { year: '2022 - Sekarang', title: 'Universitas Binaniaga Indonesia', desc: 'Mahasiswa S1 Teknik Informatika.' },
-  { year: '2024', title: 'Magang', desc: 'Pengalaman magang sebagai Software Developer / IT Support.' },
-];
+interface Timeline {
+  id: string;
+  year: string;
+  title: string;
+  description: string;
+}
 
 const skillLevels = [
   { name: 'Frontend', level: 'Advanced' },
@@ -20,10 +21,33 @@ const skillLevels = [
 ];
 
 export default function AboutPage() {
+  const [timeline, setTimeline] = useState<Timeline[]>([]);
+  const [loading, setLoading] = useState(true);
   const heroRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 0.9 });
   const infoRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 0.9, delay: 0.1 });
   const timelineHeaderRef = useScrollReveal<HTMLDivElement>({ y: 50, duration: 0.9 });
   const timelineRef = useStaggerReveal<HTMLDivElement>({ y: 50, stagger: 0.12, duration: 0.8 });
+
+  useEffect(() => {
+    async function loadTimeline() {
+      try {
+        const res = await fetch('/api/timeline');
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        setTimeline(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error loading timeline:', error);
+        setTimeline([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTimeline();
+  }, []);
 
   return (
     <>
@@ -85,16 +109,26 @@ export default function AboutPage() {
 
             <div className="timeline" ref={timelineRef}>
               <div className="timeline-line"></div>
-              {timeline.map((item, index) => (
-                <div className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`} key={item.title}>
-                  <div className="timeline-dot"></div>
-                  <div className="timeline-content">
-                    <span className="timeline-year">{item.year}</span>
-                    <h3 className="timeline-title">{item.title}</h3>
-                    <p className="timeline-desc">{item.desc}</p>
-                  </div>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                  Loading timeline...
                 </div>
-              ))}
+              ) : timeline.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                  No timeline data available
+                </div>
+              ) : (
+                timeline.map((item, index) => (
+                  <div className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`} key={item.id}>
+                    <div className="timeline-dot"></div>
+                    <div className="timeline-content">
+                      <span className="timeline-year">{item.year}</span>
+                      <h3 className="timeline-title">{item.title}</h3>
+                      <p className="timeline-desc">{item.description}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

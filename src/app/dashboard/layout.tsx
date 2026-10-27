@@ -8,23 +8,25 @@ import './dashboard.css';
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [adminName] = useState(() => {
-    if (typeof window === 'undefined') return '';
-    return localStorage.getItem('adminName') || '';
-  });
+  const [mounted, setMounted] = useState(false);
+  const [adminName, setAdminName] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isAuthenticated = !!adminName;
+
+  // Handle mounting and localStorage access
+  useEffect(() => {
+    setMounted(true);
+    const name = localStorage.getItem('adminName') || '';
+    setAdminName(name);
+    
+    if (!name) {
+      router.replace('/login');
+    }
+  }, [router]);
 
   // Auto close sidebar on route change
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    if (!adminName) {
-      router.replace('/login');
-    }
-  }, [adminName, router]);
 
   // Prevent background scroll when mobile sidebar is open
   useEffect(() => {
@@ -48,10 +50,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard/projects', icon: 'bi-folder', label: 'Projects' },
     { href: '/dashboard/certificates', icon: 'bi-award', label: 'Certificates' },
     { href: '/dashboard/gallery', icon: 'bi-images', label: 'Gallery' },
+    { href: '/dashboard/timeline', icon: 'bi-calendar-event', label: 'Timeline' },
   ];
 
-  // Only render content if authenticated
-  if (!isAuthenticated) return null;
+  // Don't render until mounted (prevents hydration mismatch)
+  if (!mounted || !adminName) {
+    return null;
+  }
 
   return (
     <>
@@ -125,7 +130,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                pathname === '/dashboard/profile' ? 'Edit Profile' :
                pathname === '/dashboard/projects' ? 'Projects' :
                pathname === '/dashboard/certificates' ? 'Certificates' :
-               pathname === '/dashboard/gallery' ? 'Gallery' : 'Dashboard'}
+               pathname === '/dashboard/gallery' ? 'Gallery' :
+               pathname === '/dashboard/timeline' ? 'Timeline' : 'Dashboard'}
             </h1>
           </div>
 

@@ -12,13 +12,7 @@ interface Timeline {
   description: string;
 }
 
-const skillLevels = [
-  { name: 'Frontend', level: 'Advanced' },
-  { name: 'Backend', level: 'Intermediate' },
-  { name: 'Mobile Dev', level: 'Intermediate' },
-  { name: 'UI/UX Design', level: 'Advanced' },
-  { name: 'Machine Learning', level: 'Intermediate' },
-];
+
 
 export default function AboutPage() {
   const [timeline, setTimeline] = useState<Timeline[]>([]);
@@ -57,11 +51,10 @@ export default function AboutPage() {
             <div className="about-hero-text">
               <p className="about-label">About me</p>
               <h1 className="about-hero-title">
-                Crafting code with purpose and precision.
+                Data Analyst dan Administrasi yang Terstuktur
               </h1>
               <p className="about-hero-desc">
-                Halo, saya Vannisa Maulvi. Saya berfokus pada Data Analyst dan pengembangan web sebagai Front-End Developer, dengan pengalaman
-                mendalam di pembuatan UI/UX dan pengolahan data.
+                Halo, saya Vannisa Maulvi. Saya memiliki minat besar pada Data Analyst dan Administrasi, serta dibekali kemampuan yang solid dalam pengolahan data, pembuatan laporan yang presisi, dan manajemen administrasi yang terstruktur.
               </p>
               <div className="about-socials">
                 <a href="https://www.instagram.com/vannisamaulvi/" target="_blank" rel="noopener noreferrer">Instagram</a>
@@ -83,17 +76,25 @@ export default function AboutPage() {
                 <div><dt>Location</dt><dd>Bogor, ID</dd></div>
                 <div><dt>Email</dt><dd>vannisamaulvi@gmail.com</dd></div>
                 <div><dt>Phone</dt><dd>+62 896-7742-1706</dd></div>
+                <div><dt>Bahasa</dt><dd>Indonesia (Fasih), English (Tingkat Menengah)</dd></div>
                 <div><dt>Freelance</dt><dd className="available">Available</dd></div>
               </dl>
             </div>
 
             <div className="about-info-block">
-              <h3>Skills</h3>
+              <h3>Soft Skill</h3>
               <ul className="about-skills">
-                {skillLevels.map((s) => (
-                  <li key={s.name}>
-                    <span>{s.name}</span>
-                    <span className="skill-level">{s.level}</span>
+                {[
+                  'Komunikasi',
+                  'Pelayanan pelanggan',
+                  'Penyampaian informasi',
+                  'Pemecahan masalah',
+                  'Ketelitian',
+                  'Kerja sama tim',
+                  'Kemampuan beradaptasi',
+                ].map((skill) => (
+                  <li key={skill}>
+                    <span>{skill}</span>
                   </li>
                 ))}
               </ul>

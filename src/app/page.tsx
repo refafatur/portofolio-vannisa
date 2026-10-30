@@ -254,15 +254,21 @@ interface SkillItem {
   ];
 
   const skills: SkillItem[] = [
+    { icon: 'bi bi-file-earmark-word', name: 'Microsoft Word', style: { color: '#2b579a' } },
+    { icon: 'bi bi-file-earmark-excel', name: 'Microsoft Excel', style: { color: '#217346' } },
+    { icon: 'bi bi-file-earmark-ppt', name: 'Microsoft PowerPoint', style: { color: '#d24726' } },
+    { icon: 'bi bi-file-earmark-spreadsheet', name: 'Google Sheets', style: { color: '#0f9d58' } },
+    { icon: 'bi bi-database-fill-gear', name: 'Entri & Kelola Data', style: { color: '#6366f1' } },
+    { icon: 'bi bi-check2-square', name: 'Pemeriksaan Data', style: { color: '#06b6d4' } },
+    { icon: 'bi bi-folder2-open', name: 'Pengelolaan Dokumen', style: { color: '#f59e0b' } },
+    { icon: 'devicon-python-plain colored', name: 'Python' },
+    { icon: 'devicon-mysql-plain colored', name: 'MySQL' },
     { icon: 'devicon-html5-plain colored', name: 'HTML' },
     { icon: 'devicon-css3-plain colored', name: 'CSS' },
     { icon: 'devicon-javascript-plain colored', name: 'JavaScript' },
-    { icon: 'devicon-bootstrap-plain colored', name: 'Bootstrap'},
+    { icon: 'devicon-bootstrap-plain colored', name: 'Bootstrap' },
     { icon: 'devicon-laravel-original colored', name: 'Laravel' },
     { icon: 'devicon-flutter-plain colored', name: 'Flutter' },
-    { icon: 'devicon-dart-plain colored', name: 'Dart' },
-    { icon: 'devicon-python-plain colored', name: 'Python' },
-    { icon: 'devicon-mysql-plain colored', name: 'MySQL' },
   ];
 
   return (
@@ -366,9 +372,9 @@ interface SkillItem {
                 <div className="fc-value">Data Analyst</div>
               </div>
               <div className="float-card float-card-2">
-                <div className="fc-icon"><i className="bi bi-code"></i></div>
+                <div className="fc-icon"><i className="bi bi-briefcase"></i></div>
                 <div className="fc-label">Specialty</div>
-                <div className="fc-value">Front-End</div>
+                <div className="fc-value">Administrasi</div>
               </div>
             </div>
           </div>
@@ -409,23 +415,25 @@ interface SkillItem {
                 <div><dt>Location</dt><dd>{profile.location}</dd></div>
                 <div><dt>Email</dt><dd>{profile.email}</dd></div>
                 <div><dt>Phone</dt><dd>{profile.phone}</dd></div>
+                <div><dt>Bahasa</dt><dd>Indonesia (Fasih), English (Tingkat Menengah)</dd></div>
                 <div><dt>Freelance</dt><dd className="available">{profile.freelance}</dd></div>
               </dl>
             </div>
 
             <div className="about-info-block">
-              <h3>Skills</h3>
+              <h3>Soft Skill</h3>
               <ul className="about-skills">
                 {[
-                  { name: 'Data Analysis', level: 'Advanced' },
-                  { name: 'Front-End', level: 'Advanced' },
-                  { name: 'Python', level: 'Intermediate' },
-                  { name: 'MySQL', level: 'Advanced' },
-                  { name: 'Laravel', level: 'Intermediate' },
-                ].map((s) => (
-                  <li key={s.name}>
-                    <span>{s.name}</span>
-                    <span className="skill-level">{s.level}</span>
+                  'Komunikasi',
+                  'Pelayanan pelanggan',
+                  'Penyampaian informasi',
+                  'Pemecahan masalah',
+                  'Ketelitian',
+                  'Kerja sama tim',
+                  'Kemampuan beradaptasi',
+                ].map((skill) => (
+                  <li key={skill}>
+                    <span>{skill}</span>
                   </li>
                 ))}
               </ul>
@@ -495,9 +503,9 @@ interface SkillItem {
       <section className="skills" id="skills">
         <div className="container">
           <div className="section-header" ref={skillsHeaderRef}>
-            <div className="about-label"><span className="dot"></span> Tech Stack</div>
-            <h2 className="section-heading">Technologies I Use</h2>
-            <p className="section-desc">The tools and technologies I work with daily.</p>
+            <div className="about-label"><span className="dot"></span> Hard Skill</div>
+            <h2 className="section-heading">Hard Skill</h2>
+            <p className="section-desc">Microsoft Word, Microsoft Excel, Microsoft PowerPoint, Google Sheets, entri dan pengelolaan data, pemeriksaan data, pengelolaan dokumen.</p>
           </div>
 
           <div className="skills-grid" ref={skillsGridRef}>

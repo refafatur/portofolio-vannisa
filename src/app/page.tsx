@@ -282,7 +282,7 @@ interface SkillItem {
           <div className="hero-content" ref={heroContentRef}>
             <div className="hero-eyebrow">
               <span className="line"></span>
-              DATA ANALYST & FRONT-END
+              DATA ANALYST & ADMINISTRASI
             </div>
 
             <h1 className="hero-title" ref={heroTitleRef}>
